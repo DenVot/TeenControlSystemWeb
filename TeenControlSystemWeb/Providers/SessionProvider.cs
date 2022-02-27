@@ -1,5 +1,8 @@
 using TeenControlSystemWeb.Data.Repositories;
-using TeenControlSystemWeb.Exceptions;
+using TeenControlSystemWeb.Exceptions.Sensor;
+using TeenControlSystemWeb.Exceptions.Session;
+using TeenControlSystemWeb.Exceptions.User;
+using TeenControlSystemWeb.Extensions;
 using TeenControlSystemWeb.Types;
 
 namespace TeenControlSystemWeb.Providers;
@@ -45,10 +48,13 @@ public class SessionProvider
         {
             throw new UserNotFoundException(userId);
         }
-        
-        var sensors = from sensorId in sensorsIds
-            select _sensorsRepository.Find(sensorId);
 
+        if (targetUser.SessionId != null)
+        {
+            throw new UserAlreadyInUseException(userId);
+        }
+        
+        var sensors = SearchSensors(sensorsIds);
         var pointA = ConvertPoint(fromPointType);
         var pointB = ConvertPoint(toPointType);
         
