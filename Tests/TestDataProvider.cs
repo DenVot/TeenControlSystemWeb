@@ -28,10 +28,7 @@ public class TestDataProvider : IDataProvider
     public IRepository<User> UsersRepository { get; }
     public IRepository<UserAuthorizationToken> UserAuthorizationTokensRepository { get; }
     
-    public void SaveChanges()
-    {
-        
-    }
+    public Task SaveChangesAsync() => Task.CompletedTask;
 
     public static IDataProvider Provide(int count = 10)
     {

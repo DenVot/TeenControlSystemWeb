@@ -75,7 +75,7 @@ public class SessionProvider
         
         await foreach (var sensor in sensors) sensor!.BindSensorToSession(session);
 
-        _dataProvider.SaveChanges(); 
+        await _dataProvider.SaveChangesAsync(); 
     }
 
     /// <summary>
@@ -100,7 +100,7 @@ public class SessionProvider
         
         session.StartedAt = DateTime.Now;
         
-        _dataProvider.SaveChanges();
+        await _dataProvider.SaveChangesAsync();
     }
 
     public void EndSession(long sessionId)
@@ -111,6 +111,8 @@ public class SessionProvider
         {
             throw new SessionNotFoundException(sessionId);
         }
+        
+        
     }
     
     private async IAsyncEnumerable<Sensor?> SearchSensors(IEnumerable<long> ids)

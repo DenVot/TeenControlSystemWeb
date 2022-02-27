@@ -8,5 +8,5 @@ public interface IDataProvider
     public IRepository<User> UsersRepository { get; }
     public IRepository<UserAuthorizationToken> UserAuthorizationTokensRepository { get; }
 
-    public void SaveChanges();
+    public Task SaveChangesAsync();
 }
