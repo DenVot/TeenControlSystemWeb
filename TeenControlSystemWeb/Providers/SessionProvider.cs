@@ -103,16 +103,20 @@ public class SessionProvider
         await _dataProvider.SaveChangesAsync();
     }
 
-    public void EndSession(long sessionId)
+    public async Task EndSession(long sessionId)
     {
-        var session = _sessionsRepository.FindAsync(sessionId);
+        var session = await _sessionsRepository.FindAsync(sessionId);
 
         if (session == null)
         {
             throw new SessionNotFoundException(sessionId);
         }
         
-        
+        session.EndedAt = DateTime.Now;
+
+        var userLinkedWithSession = await _usersRepository.FindAsync(session.OwnerId)!;
+
+        userLinkedWithSession.SessionId = null;
     }
     
     private async IAsyncEnumerable<Sensor?> SearchSensors(IEnumerable<long> ids)
