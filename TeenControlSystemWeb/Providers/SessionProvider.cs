@@ -78,6 +78,58 @@ public class SessionProvider
         _dataProvider.SaveChanges(); 
     }
 
+    /// <summary>
+    /// Начинает сессиию
+    /// </summary>
+    /// <param name="sessionId">Id сессии</param>
+    /// <exception cref="SessionNotFoundException">Вызывается, если сессия не найдена</exception>
+    /// <exception cref="SessionAlreadyStartedException">Вызывается, если сессиия уже начата</exception>
+    public void StartSession(long sessionId)
+    {
+        var session = _sessionsRepository.Find(sessionId);
+
+        if (session == null)
+        {
+            throw new SessionNotFoundException(sessionId);
+        }
+
+        if (session.StartedAt != null)
+        {
+            throw new SessionAlreadyStartedException(sessionId);
+        }
+        
+        session.StartedAt = DateTime.Now;
+        
+        _dataProvider.SaveChanges();
+    }
+
+    public void EndSession(long sessionId)
+    {
+        var session = _sessionsRepository.Find(sessionId);
+
+        if (session == null)
+        {
+            throw new SessionNotFoundException(sessionId);
+        }
+        
+        
+    }
+    
+    private IEnumerable<Sensor> SearchSensors(IEnumerable<long> ids)
+    {
+        foreach (var id in ids)
+        {
+            var sensor = _sensorsRepository.Find(id);
+
+            if (sensor == null)
+            {
+                throw new SensorNotFoundException(id);
+            }
+
+            yield return sensor;
+        }
+    }
+
     private static Point ConvertPoint(PointType point) => new()
     {
         Longitude = point.Longitude,
