@@ -99,7 +99,7 @@ public class TestRepository<T> : IRepository<T> where T : class
         _array = array?.ToList() ?? new List<T>();
     }
 
-    public T? Find(object id) => _array.FirstOrDefault(x => _getId(x) == (int) id);
+    public T? Find(object id) => _array.FirstOrDefault(x => _getId(x) == (long)id);
 
     public void Add(T obj)
     {
