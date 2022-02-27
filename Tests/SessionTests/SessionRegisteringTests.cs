@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using TeenControlSystemWeb.Data.Repositories;
 using TeenControlSystemWeb.Exceptions.Sensor;
 using TeenControlSystemWeb.Exceptions.Session;
@@ -19,12 +20,12 @@ public class SessionRegisteringTests
     private readonly DateTime _startAt = new(2022, 2, 22);
     
     [Fact]
-    public void RegisterSession_Must_Register()
+    public async Task RegisterSession_Must_Register()
     {
         const long userId = 0;
         var sessionProvider = new SessionProvider(_testDataProvider);
         
-        sessionProvider.RegisterSession(userId,
+        await sessionProvider.RegisterSessionAsync(userId,
             SessionName,
             _startAt,
             _sensorsIds,
@@ -33,12 +34,12 @@ public class SessionRegisteringTests
     }
 
     [Fact]
-    public void RegisterSession_Must_Throw_Exception_No_User_Found()
+    public async Task RegisterSession_Must_Throw_Exception_No_User_Found()
     {
         const long userId = 11;
         var sessionProvider = new SessionProvider(_testDataProvider);
         
-        Assert.Throws<UserNotFoundException>(() => sessionProvider.RegisterSession(userId,
+        await Assert.ThrowsAsync<UserNotFoundException>(() => sessionProvider.RegisterSessionAsync(userId,
             SessionName,
             _startAt,
             _sensorsIds,
@@ -47,12 +48,12 @@ public class SessionRegisteringTests
     }
 
     [Fact]
-    public void RegisterSession_Must_Throw_Exception_No_Sensor_Found()
+    public async Task RegisterSession_Must_Throw_Exception_No_Sensor_Found()
     {
         const long userId = 0;
         var sessionProvider = new SessionProvider(_testDataProvider);
         
-        Assert.Throws<SensorNotFoundException>(() => sessionProvider.RegisterSession(userId,
+        await Assert.ThrowsAsync<SensorNotFoundException>(() => sessionProvider.RegisterSessionAsync(userId,
             SessionName,
             _startAt,
             new[] {0L, 11},
@@ -61,19 +62,19 @@ public class SessionRegisteringTests
     }
     
     [Fact]
-    public void RegisterSession_Must_Throw_User_Already_In_Use()
+    public async Task RegisterSession_Must_Throw_User_Already_In_Use()
     {
         const long userId = 0;
         var sessionProvider = new SessionProvider(_testDataProvider);
 
-        sessionProvider.RegisterSession(userId,
+        await sessionProvider.RegisterSessionAsync(userId,
             SessionName,
             _startAt,
             _sensorsIds,
             _fromPoint,
             _toPoint);
         
-        Assert.Throws<UserAlreadyInUseException>(() => sessionProvider.RegisterSession(userId,
+        await Assert.ThrowsAsync<UserAlreadyInUseException>(() => sessionProvider.RegisterSessionAsync(userId,
             SessionName,
             _startAt,
             new []{9L},
@@ -82,18 +83,18 @@ public class SessionRegisteringTests
     }
 
     [Fact]
-    public void RegisterSession_Must_Throw_Sensor_Already_In_Use()
+    public async Task RegisterSession_Must_Throw_Sensor_Already_In_Use()
     {
         var sessionProvider = new SessionProvider(_testDataProvider);
 
-        sessionProvider.RegisterSession(0,
+        await sessionProvider.RegisterSessionAsync(0,
             SessionName,
             _startAt,
             _sensorsIds,
             _fromPoint,
             _toPoint);
         
-        Assert.Throws<SensorAlreadyInUseException>(() => sessionProvider.RegisterSession(1,
+        await Assert.ThrowsAsync<SensorAlreadyInUseException>(() => sessionProvider.RegisterSessionAsync(1,
             SessionName,
             _startAt,
             _sensorsIds,

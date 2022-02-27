@@ -35,14 +35,14 @@ public class SessionProvider
     /// <param name="toPointType">Конечная точка сессии</param>
     /// <exception cref="UserNotFoundException">Вызывается, если пользователь не найден</exception>
     /// <exception cref="UserAlreadyInUseException">Вызывается, если пользователь уже учавствует в другой сессии</exception>
-    public void RegisterSession(long userId,
+    public async Task RegisterSessionAsync(long userId,
         string sessionName,
         DateTime startAt,
         IEnumerable<long> sensorsIds,
         PointType fromPointType,
         PointType toPointType)
     {
-        var targetUser = _usersRepository.Find(userId);
+        var targetUser = await _usersRepository.FindAsync(userId);
 
         if (targetUser == null)
         {
@@ -58,8 +58,8 @@ public class SessionProvider
         var pointA = ConvertPoint(fromPointType);
         var pointB = ConvertPoint(toPointType);
         
-        _pointsRepository.Add(pointA);
-        _pointsRepository.Add(pointB);
+        await _pointsRepository.AddAsync(pointA);
+        await _pointsRepository.AddAsync(pointB);
         
         var session = new Session()
         {
@@ -67,13 +67,13 @@ public class SessionProvider
             Name = sessionName
         };
         
-        _sessionsRepository.Add(session);
+        await _sessionsRepository.AddAsync(session);
 
         targetUser.SessionId = session.Id;
         session.Points.Add(pointA);
         session.Points.Add(pointB);
         
-        foreach (var sensor in sensors) sensor.BindSensorToSession(session);
+        await foreach (var sensor in sensors) sensor!.BindSensorToSession(session);
 
         _dataProvider.SaveChanges(); 
     }
@@ -84,9 +84,9 @@ public class SessionProvider
     /// <param name="sessionId">Id сессии</param>
     /// <exception cref="SessionNotFoundException">Вызывается, если сессия не найдена</exception>
     /// <exception cref="SessionAlreadyStartedException">Вызывается, если сессиия уже начата</exception>
-    public void StartSession(long sessionId)
+    public async Task StartSessionAsync(long sessionId)
     {
-        var session = _sessionsRepository.Find(sessionId);
+        var session = await _sessionsRepository.FindAsync(sessionId);
 
         if (session == null)
         {
@@ -105,21 +105,19 @@ public class SessionProvider
 
     public void EndSession(long sessionId)
     {
-        var session = _sessionsRepository.Find(sessionId);
+        var session = _sessionsRepository.FindAsync(sessionId);
 
         if (session == null)
         {
             throw new SessionNotFoundException(sessionId);
         }
-        
-        
     }
     
-    private IEnumerable<Sensor> SearchSensors(IEnumerable<long> ids)
+    private async IAsyncEnumerable<Sensor?> SearchSensors(IEnumerable<long> ids)
     {
         foreach (var id in ids)
         {
-            var sensor = _sensorsRepository.Find(id);
+            var sensor = await _sensorsRepository.FindAsync(id);
 
             if (sensor == null)
             {

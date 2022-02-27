@@ -2,9 +2,9 @@ namespace TeenControlSystemWeb.Data.Repositories;
 
 public interface IRepository<T> where T : class
 {
-    T? Find(object id);
-    void Add(T obj);
-    void AddRange(IEnumerable<T> objs);
-    void Remove(T target);
-    void RemoveRange(IEnumerable<T> targets);
+    Task<T?> FindAsync(object id);
+    Task AddAsync(T obj);
+    Task AddRangeAsync(IEnumerable<T> objs);
+    Task RemoveAsync(T target);
+    Task RemoveRangeAsync(IEnumerable<T> targets);
 }

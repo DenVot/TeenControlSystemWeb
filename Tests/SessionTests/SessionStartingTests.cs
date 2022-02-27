@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using TeenControlSystemWeb.Data.Repositories;
 using TeenControlSystemWeb.Exceptions.Session;
 using TeenControlSystemWeb.Providers;
@@ -10,35 +11,35 @@ public class SessionStartingTests
     private readonly IDataProvider _testDataProvider = TestDataProvider.Provide();
 
     [Fact]
-    public void StartSessionTest_Must_Start()
+    public async Task StartSessionTest_Must_Start()
     {
         const long sessionId = 0;
         var sessionsProvider = new SessionProvider(_testDataProvider);
         
-        sessionsProvider.StartSession(sessionId);
+        await sessionsProvider.StartSessionAsync(sessionId);
 
-        Assert.True(_testDataProvider.SessionsRepository.Find(sessionId)!.StartedAt != null);
+        Assert.True((await _testDataProvider.SessionsRepository.FindAsync(sessionId))!.StartedAt != null);
     }
 
     [Fact]
-    public void StartSessionTest_Must_Throw_Exception_Session_Not_Found()
+    public async Task StartSessionTest_Must_Throw_Exception_Session_Not_Found()
     {
         const long sessionId = 10;
         var sessionsProvider = new SessionProvider(_testDataProvider);
         
-        Assert.Throws<SessionNotFoundException>(() =>
-            sessionsProvider.StartSession(sessionId));
+        await Assert.ThrowsAsync<SessionNotFoundException>(() =>
+            sessionsProvider.StartSessionAsync(sessionId));
     }
 
     [Fact]
-    public void StartSessionTest_Must_Throw_Exception_Session_Already_Started()
+    public async Task StartSessionTest_Must_Throw_Exception_Session_Already_Started()
     {
         const long sessionId = 0;
         var sessionsProvider = new SessionProvider(_testDataProvider);
         
-        sessionsProvider.StartSession(sessionId);
+        await sessionsProvider.StartSessionAsync(sessionId);
         
-        Assert.Throws<SessionAlreadyStartedException>(() => 
-            sessionsProvider.StartSession(sessionId));
+        await Assert.ThrowsAsync<SessionAlreadyStartedException>(() => 
+            sessionsProvider.StartSessionAsync(sessionId));
     }
 }

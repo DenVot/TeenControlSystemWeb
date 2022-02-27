@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using TeenControlSystemWeb.Data.Models;
 using TeenControlSystemWeb.Data.Repositories;
 
@@ -99,31 +100,33 @@ public class TestRepository<T> : IRepository<T> where T : class
         _array = array?.ToList() ?? new List<T>();
     }
 
-    public T? Find(object id) => _array.FirstOrDefault(x => _getId(x) == (long)id);
+    public Task<T?> FindAsync(object id) => Task.FromResult(_array.FirstOrDefault(x => _getId(x) == (long)id));
 
-    public void Add(T obj)
+    public Task AddAsync(T obj)
     {
         _array.Add(obj);
+        return Task.CompletedTask;
     }
 
-    public void AddRange(IEnumerable<T> objs)
+    public async Task AddRangeAsync(IEnumerable<T> objs)
     {
         foreach (var obj in objs)
         {
-            Add(obj);
+            await AddAsync(obj);
         }
     }
 
-    public void Remove(T target)
+    public Task RemoveAsync(T target)
     {
         _array.Remove(target);
+        return Task.CompletedTask;
     }
 
-    public void RemoveRange(IEnumerable<T> targets)
+    public async Task RemoveRangeAsync(IEnumerable<T> targets)
     {
         foreach (var target in targets)
         {
-            Remove(target);
+            await RemoveAsync(target);
         }
     }
 }
