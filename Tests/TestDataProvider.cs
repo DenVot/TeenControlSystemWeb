@@ -116,17 +116,16 @@ public class TestRepository<T> : IRepository<T> where T : class
         }
     }
 
-    public Task RemoveAsync(T target)
+    public void Remove(T target)
     {
         _array.Remove(target);
-        return Task.CompletedTask;
     }
 
-    public async Task RemoveRangeAsync(IEnumerable<T> targets)
+    public void RemoveRange(IEnumerable<T> targets)
     {
         foreach (var target in targets)
         {
-            await RemoveAsync(target);
+            Remove(target);
         }
     }
 }
