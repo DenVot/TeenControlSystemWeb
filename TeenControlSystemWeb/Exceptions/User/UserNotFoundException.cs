@@ -1,4 +1,4 @@
-namespace TeenControlSystemWeb.Exceptions;
+namespace TeenControlSystemWeb.Exceptions.User;
 
 public class UserNotFoundException : SystemException
 {
