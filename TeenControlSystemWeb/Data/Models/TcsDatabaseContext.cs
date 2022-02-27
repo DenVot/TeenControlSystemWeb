@@ -87,6 +87,11 @@ namespace TeenControlSystemWeb.Data.Models
                     .IsUnicode(false);
 
                 entity.Property(e => e.Username).IsUnicode(false);
+
+                entity.HasOne(d => d.Session)
+                    .WithMany(p => p.Users)
+                    .HasForeignKey(d => d.SessionId)
+                    .HasConstraintName("FK__Users__SessionId__34C8D9D1");
             });
 
             modelBuilder.Entity<UserAuthorizationToken>(entity =>
