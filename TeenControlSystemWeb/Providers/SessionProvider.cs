@@ -20,8 +20,22 @@ public class SessionProvider
         _sessionsRepository = dataProvider.SessionsRepository;
         _pointsRepository = dataProvider.PointsRepository;
     }
-
-    public void RegisterSession(int userId, string sessionName, DateTime startAt, int[] sensorsIds,
+    
+    /// <summary>
+    /// Регистрирует сессию
+    /// </summary>
+    /// <param name="userId">Id владельца сессии</param>
+    /// <param name="sessionName">Назавание сессии</param>
+    /// <param name="startAt">Запланированное начало сессии</param>
+    /// <param name="sensorsIds">Id всех сенсоров, которые учавствуют в сессии</param>
+    /// <param name="fromPointType">Начальная точка сессии</param>
+    /// <param name="toPointType">Конечная точка сессии</param>
+    /// <exception cref="UserNotFoundException">Вызывается, если пользователь не найден</exception>
+    /// <exception cref="UserAlreadyInUseException">Вызывается, если пользователь уже учавствует в другой сессии</exception>
+    public void RegisterSession(long userId,
+        string sessionName,
+        DateTime startAt,
+        IEnumerable<long> sensorsIds,
         PointType fromPointType,
         PointType toPointType)
     {
