@@ -73,11 +73,8 @@ public class SessionProvider
         session.Points.Add(pointA);
         session.Points.Add(pointB);
         
-        foreach (var sensor in sensors)
-        {
-            session.Sensors.Add(sensor);
-        }
-        
+        foreach (var sensor in sensors) sensor.BindSensorToSession(session);
+
         _dataProvider.SaveChanges(); 
     }
 
