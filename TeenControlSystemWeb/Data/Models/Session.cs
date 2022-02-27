@@ -9,6 +9,7 @@ namespace TeenControlSystemWeb.Data.Models
         {
             Points = new HashSet<Point>();
             Sensors = new HashSet<Sensor>();
+            Users = new HashSet<User>();
         }
 
         public long Id { get; set; }
@@ -26,5 +27,6 @@ namespace TeenControlSystemWeb.Data.Models
         public virtual Point To { get; set; } = null!;
         public virtual ICollection<Point> Points { get; set; }
         public virtual ICollection<Sensor> Sensors { get; set; }
+        public virtual ICollection<User> Users { get; set; }
     }
 }
