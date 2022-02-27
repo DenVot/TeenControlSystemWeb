@@ -69,7 +69,7 @@ public class SessionProvider
         
         _sessionsRepository.Add(session);
 
-        session.Owner = targetUser;
+        targetUser.SessionId = session.Id;
         session.Points.Add(pointA);
         session.Points.Add(pointB);
         
