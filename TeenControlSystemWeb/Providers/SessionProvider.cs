@@ -103,7 +103,7 @@ public class SessionProvider
         await _dataProvider.SaveChangesAsync();
     }
 
-    public async Task EndSession(long sessionId)
+    public async Task EndSessionAsync(long sessionId)
     {
         var session = await _sessionsRepository.FindAsync(sessionId);
 
@@ -111,10 +111,15 @@ public class SessionProvider
         {
             throw new SessionNotFoundException(sessionId);
         }
+
+        if (session.StartedAt == null)
+        {
+            throw new SessionNotStartedException(sessionId);
+        }
         
         session.EndedAt = DateTime.Now;
 
-        var userLinkedWithSession = await _usersRepository.FindAsync(session.OwnerId)!;
+        var userLinkedWithSession = session.Owner;
 
         userLinkedWithSession.SessionId = null;
     }
