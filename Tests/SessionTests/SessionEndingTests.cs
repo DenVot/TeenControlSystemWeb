@@ -34,6 +34,18 @@ public class SessionEndingTests
     }
 
     [Fact]
+    public async Task EndSession_Must_Throw_Exception_Session_Not_Found()
+    {
+        var mockDataProvider = new Mock<IDataProvider>();
+
+        mockDataProvider.Setup(x => x.SessionsRepository.FindAsync(0L)).ReturnsAsync((Session?) null);
+        
+        var sessionProvider = mockDataProvider.ConfigureSessionProvider();
+
+        await Assert.ThrowsAsync<SessionNotFoundException>(() => sessionProvider.EndSessionAsync(0L));
+    }
+    
+    [Fact]
     public async Task EndSession_Must_Throw_Exception_Session_Not_Started()
     {
         const long id = 0;
