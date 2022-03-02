@@ -11,6 +11,6 @@ public static class SensorExtensions
             throw new SensorAlreadyInUseException(sensor.Id);
         }
             
-        sensor.SessionId = session.Id;
+        sensor.Session = session;
     }
 }

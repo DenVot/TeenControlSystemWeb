@@ -69,7 +69,7 @@ public class SessionProvider
         
         await _sessionsRepository.AddAsync(session);
 
-        targetUser.SessionId = session.Id;
+        targetUser.Session = session;
         session.Points.Add(pointA);
         session.Points.Add(pointB);
         
@@ -121,7 +121,7 @@ public class SessionProvider
 
         var userLinkedWithSession = session.Owner;
 
-        userLinkedWithSession.SessionId = null;
+        userLinkedWithSession.Session = null;
     }
     
     private async IAsyncEnumerable<Sensor?> SearchSensors(IEnumerable<long> ids)
