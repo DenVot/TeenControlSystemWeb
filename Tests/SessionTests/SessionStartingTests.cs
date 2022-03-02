@@ -17,8 +17,6 @@ public class SessionStartingTests
         const long sessionId = 0;
         var dataProviderMock = new Mock<IDataProvider>(MockBehavior.Loose);
 
-        dataProviderMock.InitializeMock();
-
         dataProviderMock.Setup(x => x.SessionsRepository.FindAsync(sessionId)).ReturnsAsync(new Session()
         {
             Id = 0,
