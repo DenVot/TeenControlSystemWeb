@@ -57,7 +57,6 @@ public class LoginTests
                 PasswordMd5Hash = "202cb962ac59075b964b07152d234b70" //123
             }
         });
-        
         configMock.Setup(x => x["JwtSecret"]).Returns("7536b1812b2fc0ca67a2cfd9466fdf9b");
         
         var authService = dataProviderMock.ConfigureAuthorizationService(configMock.Object);
