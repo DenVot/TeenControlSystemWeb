@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 using Moq;
 using TeenControlSystemWeb.Data.Models;
 using TeenControlSystemWeb.Data.Repositories;
@@ -15,10 +16,11 @@ public class RegistrationTests
     public async Task Registration_Must_LogUp()
     {
         var dataProvider = new Mock<IDataProvider>();
-
+        var configMock = new Mock<IConfiguration>();
+        configMock.Setup(x => x["JwtSecret"]).Returns("7536b1812b2fc0ca67a2cfd9466fdf9b");
         dataProvider.Setup(x => x.UsersRepository.GetAll()).Returns(ArraySegment<User>.Empty);
         
-        var authService = dataProvider.ConfigureAuthorizationService();
+        var authService = dataProvider.ConfigureAuthorizationService(configMock.Object);
 
         var userLogUpModel = new UserLogUpType()
         {
@@ -27,7 +29,10 @@ public class RegistrationTests
             IsAdmin = true
         };
 
-        await authService.LogUpAsync(userLogUpModel);
+        var authResponse = await authService.LogUpAsync(userLogUpModel);
+        
+        Assert.NotNull(authResponse.User);
+        Assert.NotNull(authResponse.Token);
     }
 
     [Fact]
