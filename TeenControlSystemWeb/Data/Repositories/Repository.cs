@@ -18,4 +18,6 @@ public class Repository<T> : IRepository<T> where T : class
     public void Remove(T target) => _context.Remove(target);
 
     public void RemoveRange(IEnumerable<T> targets) => _context.RemoveRange(targets);
+    
+    public IEnumerable<T> GetAll() => _context.Set<T>();
 }

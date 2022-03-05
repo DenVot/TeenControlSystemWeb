@@ -22,16 +22,9 @@ public class PasswordComparator
         {
             throw new UserNotFoundException(id);
         }
-        
-        using var md5 = MD5.Create();
-        var passwordBytes = Encoding.UTF8.GetBytes(password);
-        
-        var bytes = md5.ComputeHash(passwordBytes);
-        var passwordHash = BitConverter.ToString(bytes)
-            .Replace("-",
-                string.Empty)
-            .ToLower();
 
-        return user.PasswordMd5Hash == passwordHash;
+        using var hasher = new Md5Hasher();
+        
+        return user.PasswordMd5Hash == hasher.HashString(password);
     }
 }

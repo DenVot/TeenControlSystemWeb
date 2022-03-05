@@ -5,7 +5,7 @@ using TeenControlSystemWeb.Data.Repositories;
 using TeenControlSystemWeb.Exceptions.User;
 using Xunit;
 
-namespace Tests.AuthorizationTests.HashingTests;
+namespace Tests.AuthorizationTests;
 
 public class PasswordHashingEqualitiesEnsurerTests
 {
