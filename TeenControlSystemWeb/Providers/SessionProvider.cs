@@ -3,7 +3,7 @@ using TeenControlSystemWeb.Exceptions.Sensor;
 using TeenControlSystemWeb.Exceptions.Session;
 using TeenControlSystemWeb.Exceptions.User;
 using TeenControlSystemWeb.Extensions;
-using TeenControlSystemWeb.Types;
+using TeenControlSystemWeb.Helpers;
 
 namespace TeenControlSystemWeb.Providers;
 
@@ -103,6 +103,12 @@ public class SessionProvider
         await _dataProvider.SaveChangesAsync();
     }
 
+    /// <summary>
+    /// Заканчивает сессию
+    /// </summary>
+    /// <param name="sessionId">Id сесии</param>
+    /// <exception cref="SessionNotFoundException">Вызывается, если сессия не найдена</exception>
+    /// <exception cref="SessionNotStartedException">Вызывается, если сессия еще не начата</exception>
     public async Task EndSessionAsync(long sessionId)
     {
         var session = await _sessionsRepository.FindAsync(sessionId);
@@ -124,7 +130,99 @@ public class SessionProvider
         userLinkedWithSession.Session = null;
     }
     
-    private async IAsyncEnumerable<Sensor?> SearchSensors(IEnumerable<long> ids)
+    /// <summary>
+    /// Изменяет данные сессии, которые можно изменить
+    /// </summary>
+    /// <param name="target">Id сессии</param>
+    /// <param name="delta">Объект репрезентирующий разницу между текущей сессией и желаемой</param>
+    /// <exception cref="SessionNotFoundException">Вызывается, если сессия не найдена</exception>
+    /// <exception cref="UserNotFoundException">Вызывается, если новый ответственный не найден по его Id</exception>
+    /// <exception cref="InvalidOperationException">Вызывается, если подана некорректная дата</exception>
+    /// <exception cref="SensorNotFoundException">Вызывается, если датчик, который нужно привязать/отвязать, не найден</exception>
+    public async Task EditSessionAsync(long target, SessionDelta delta)
+    {
+        var targetSession = await _sessionsRepository.FindAsync(target);
+
+        if (targetSession == null)
+        {
+            throw new SessionNotFoundException(target);
+        }
+
+        var linkedSensors = targetSession.Sensors.Select(x => x.Id).ToArray();
+        
+        if (delta.Name != null)
+        {
+            targetSession.Name = delta.Name;
+        }
+
+        if (delta.OwnerId != null && delta.OwnerId != targetSession.Owner.Id)
+        {
+            var targetUser = await _usersRepository.FindAsync(delta.OwnerId);
+
+            if (targetUser == null)
+            {
+                throw new UserNotFoundException(delta.OwnerId.Value);
+            }
+
+            targetSession.Owner = targetUser;
+        }
+
+        if (delta.StartAt != null)
+        {
+            var now = DateTime.Now;
+
+            if (delta.StartAt < now)
+            {
+                throw new InvalidOperationException("Измененная дата не должна быть в прошлом");
+            }
+
+            targetSession.StartAt = delta.StartAt.Value;
+        }
+
+        if (delta.SensorsToAdd != null)
+        {
+            foreach (var sensorId in delta.SensorsToAdd)
+            {
+                if (linkedSensors.Any(x => x == sensorId))
+                {
+                    continue;
+                }
+                
+                var sensor = await _sensorsRepository.FindAsync(sensorId);
+                
+                if (sensor == null)
+                {
+                    throw new SensorNotFoundException(sensorId);
+                }
+                
+                targetSession.Sensors.Add(sensor);
+            }
+        }
+
+        if (delta.SensorsToRemove != null)
+        {
+            foreach (var sensorId in delta.SensorsToRemove)
+            {
+                if (linkedSensors.All(x => x != sensorId))
+                {
+                    continue;
+                }
+                
+                var sensor = await _sensorsRepository.FindAsync(sensorId);
+                
+                if (sensor == null)
+                {
+                    throw new SensorNotFoundException(sensorId);
+                }
+
+                targetSession.Sensors.Remove(sensor);
+            }
+        }
+
+        await _dataProvider.SaveChangesAsync();
+    }
+    
+    private async IAsyncEnumerable<Sensor?> SearchSensors(IEnumerable<long> ids) //Поиск маячков по идентификаторам
     {
         foreach (var id in ids)
         {

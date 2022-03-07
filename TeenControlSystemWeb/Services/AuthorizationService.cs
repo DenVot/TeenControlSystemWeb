@@ -19,6 +19,14 @@ public class AuthorizationService
         _passwordComparator = new PasswordComparator(dataProvider);
     }
 
+    /// <summary>
+    /// Регистрирует пользователя
+    /// </summary>
+    /// <param name="logUpType">Данные регистрации</param>
+    /// <returns>Возвращает данные пользователя и JWT токен</returns>
+    /// <exception cref="UserAlreadyExistsWithContextUsernameException">
+    /// Вызывается, если пользователь уже существует с таким именем
+    /// </exception>
     public async Task<AuthResponse> LogUpAsync(UserLogUpType logUpType)
     {
         using var hasher = new Md5Hasher();
@@ -42,6 +50,14 @@ public class AuthorizationService
         return GenerateResponseByUserId(user);
     }
 
+    /// <summary>
+    /// Выполняет вход пользователя
+    /// </summary>
+    /// <param name="loginObj">Данные логинизации</param>
+    /// <returns>Возвращает данные пользователя и JWT токен</returns>
+    /// <exception cref="FailedToAuthUserException">
+    /// Вызывается, если не получилось авторизовать пользователя
+    /// </exception>
     public AuthResponse Login(LoginType loginObj)
     {
         using var md5Hasher = new Md5Hasher();
@@ -57,7 +73,7 @@ public class AuthorizationService
         return GenerateResponseByUserId(firstAssociatedUser);
     }
 
-    private AuthResponse GenerateResponseByUserId(User user)
+    private AuthResponse GenerateResponseByUserId(User user) //Создание ответа с помощью идентификатора пользователя
     {
         var jwtHelper = new JwtHelper();
         var jwtToken = jwtHelper.GenerateJwt(_configuration["JwtSecret"], user.Id);
