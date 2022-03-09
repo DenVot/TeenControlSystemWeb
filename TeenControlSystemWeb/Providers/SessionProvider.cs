@@ -72,8 +72,12 @@ public class SessionProvider
         targetUser.Session = session;
         session.Points.Add(pointA);
         session.Points.Add(pointB);
-        
-        await foreach (var sensor in sensors) sensor!.BindSensorToSession(session);
+
+        await foreach (var sensor in sensors)
+        {
+            sensor!.BindSensorToSession(session);
+            sensor!.Online = false;
+        }
 
         await _dataProvider.SaveChangesAsync(); 
     }
@@ -128,6 +132,8 @@ public class SessionProvider
         var userLinkedWithSession = session.Owner;
 
         userLinkedWithSession.Session = null;
+
+        await _dataProvider.SaveChangesAsync();
     }
     
     /// <summary>
@@ -221,7 +227,7 @@ public class SessionProvider
 
         await _dataProvider.SaveChangesAsync();
     }
-    
+
     private async IAsyncEnumerable<Sensor?> SearchSensors(IEnumerable<long> ids) //Поиск маячков по идентификаторам
     {
         foreach (var id in ids)
@@ -242,4 +248,38 @@ public class SessionProvider
         Longitude = point.Longitude,
         Latitude = point.Latitude
     };
+
+    public async Task UpdateSessionStateAsync(long id, SessionSnapshot snapshot)
+    {
+        var session = await _sessionsRepository.FindAsync(id);
+
+        if (session == null)
+        {
+            throw new SessionNotFoundException(id);
+        }
+        
+        foreach (var sensor in session.Sensors)
+        {
+            var sensorId = sensor.Id;
+            
+            if (!snapshot.Sensors.ContainsKey(sensorId))
+            {
+                throw new KeyNotFoundException("Не найдено обновление для маячка с ID " + sensorId);
+            }
+
+            sensor.Online = snapshot.Sensors[sensorId];
+        }
+
+        var point = new Point()
+        {
+            Longitude = snapshot.Point.Longitude,
+            Latitude = snapshot.Point.Latitude
+        };
+
+        await _pointsRepository.AddAsync(point);
+        
+        session.Points.Add(point);
+
+        await _dataProvider.SaveChangesAsync();
+    }
 }
