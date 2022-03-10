@@ -30,7 +30,7 @@ public class AuthorizationService
     public async Task<AuthResponse> LogUpAsync(UserLogUpType logUpType)
     {
         using var hasher = new Md5Hasher();
-        var allUsers = _dataProvider.UsersRepository.GetAll();
+        var allUsers = _dataProvider.UsersRepository.GetAll().ToArray();
 
         if (allUsers.Any(x => x.Username == logUpType.Username))
         {

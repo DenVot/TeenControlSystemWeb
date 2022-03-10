@@ -8,7 +8,6 @@ namespace TeenControlSystemWeb.Data.Models
         public User()
         {
             Sessions = new HashSet<Session>();
-            UserAuthorizationTokens = new HashSet<UserAuthorizationToken>();
         }
 
         public long Id { get; set; }
@@ -19,6 +18,5 @@ namespace TeenControlSystemWeb.Data.Models
 
         public virtual Session? Session { get; set; }
         public virtual ICollection<Session> Sessions { get; set; }
-        public virtual ICollection<UserAuthorizationToken> UserAuthorizationTokens { get; set; }
     }
 }

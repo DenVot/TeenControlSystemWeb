@@ -20,7 +20,6 @@ namespace TeenControlSystemWeb.Data.Models
         public virtual DbSet<Sensor> Sensors { get; set; } = null!;
         public virtual DbSet<Session> Sessions { get; set; } = null!;
         public virtual DbSet<User> Users { get; set; } = null!;
-        public virtual DbSet<UserAuthorizationToken> UserAuthorizationTokens { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -92,19 +91,6 @@ namespace TeenControlSystemWeb.Data.Models
                     .WithMany(p => p.Users)
                     .HasForeignKey(d => d.SessionId)
                     .HasConstraintName("FK__Users__SessionId__34C8D9D1");
-            });
-
-            modelBuilder.Entity<UserAuthorizationToken>(entity =>
-            {
-                entity.Property(e => e.Token)
-                    .HasMaxLength(36)
-                    .IsUnicode(false);
-
-                entity.HasOne(d => d.Owner)
-                    .WithMany(p => p.UserAuthorizationTokens)
-                    .HasForeignKey(d => d.OwnerId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__UserAutho__Owner__25869641");
             });
 
             OnModelCreatingPartial(modelBuilder);

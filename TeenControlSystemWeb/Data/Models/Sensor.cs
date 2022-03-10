@@ -1,4 +1,7 @@
-﻿namespace TeenControlSystemWeb.Data.Models
+﻿using System;
+using System.Collections.Generic;
+
+namespace TeenControlSystemWeb.Data.Models
 {
     public partial class Sensor
     {
