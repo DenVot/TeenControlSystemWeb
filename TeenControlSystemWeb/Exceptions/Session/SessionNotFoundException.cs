@@ -2,8 +2,10 @@ namespace TeenControlSystemWeb.Exceptions.Session;
 
 public class SessionNotFoundException : SystemException
 {
-    public SessionNotFoundException(long id) : base("Session with following id was not found: " + id)
+    private readonly long _id;
+
+    public SessionNotFoundException(long id) : base("Сессия не найдена")
     {
-        
+        _id = id;
     }
 }
