@@ -1,5 +1,8 @@
 namespace TeenControlSystemWeb.Data.Repositories;
 
+/// <summary>
+/// Набор репозиториев
+/// </summary>
 public interface IDataProvider
 {
     public IRepository<Point> PointsRepository { get; }

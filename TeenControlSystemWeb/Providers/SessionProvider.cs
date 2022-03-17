@@ -7,6 +7,9 @@ using TeenControlSystemWeb.Helpers;
 
 namespace TeenControlSystemWeb.Providers;
 
+/// <summary>
+/// Позволяет производить манипуляции с сессиями
+/// </summary>
 public class SessionProvider
 {
     private readonly IDataProvider _dataProvider;
