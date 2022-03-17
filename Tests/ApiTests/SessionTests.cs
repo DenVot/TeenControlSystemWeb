@@ -15,7 +15,23 @@ public class SessionTests
     [Fact]
     public async Task CreateSessionTest_Must_Create()
     {
-        var dataProviderMock = new Mock<IDataProvider>();
+        var dataProviderMock = new Mock<IDataProvider>(MockBehavior.Loose);
+
+        dataProviderMock.Setup(x => x.UsersRepository.FindAsync(0L)).ReturnsAsync(new User()
+        {
+            Id = 0,
+            Session = null
+        });
+
+        dataProviderMock.Setup(x => x.SensorsRepository.FindAsync(0L)).ReturnsAsync(new Sensor()
+        {
+            Id = 0,
+            Session = null
+        });
+
+        dataProviderMock.Setup(x => x.PointsRepository.AddAsync(null!));
+        dataProviderMock.Setup(x => x.SessionsRepository.AddAsync(null!));
+        
         var sessionProvider = dataProviderMock.ConfigureSessionProvider();
         var testUser = new User()
         {
@@ -28,12 +44,7 @@ public class SessionTests
         };
 
         sessionController.HttpContext.Items["User"] = testUser;
-        dataProviderMock.Setup(x => x.UsersRepository.FindAsync(0L)).ReturnsAsync(testUser);
-        dataProviderMock.Setup(x => x.SensorsRepository.FindAsync(0L)).ReturnsAsync(new Sensor()
-        {
-            Id = 0
-        });
-        
+
         var response = await sessionController.RegisterSession(new RegisterSessionType()
         {
             Name = "Test",
@@ -44,6 +55,6 @@ public class SessionTests
             ToPoint = new PointType(1, 1)
         });
         
-        Assert.IsType<OkObjectResult>(response);
+        Assert.IsType<OkResult>(response);
     }
 }
