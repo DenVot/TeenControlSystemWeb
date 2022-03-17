@@ -46,12 +46,12 @@ public class SessionProvider
 
         if (targetUser == null)
         {
-            throw new UserNotFoundException(userId);
+            throw new UserNotFoundException();
         }
 
         if (targetUser.SessionId != null)
         {
-            throw new UserAlreadyInUseException(userId);
+            throw new UserAlreadyInUseException();
         }
         
         var sensors = SearchSensors(sensorsIds);
@@ -99,7 +99,7 @@ public class SessionProvider
 
         if (session.StartedAt != null)
         {
-            throw new SessionAlreadyStartedException(sessionId);
+            throw new SessionAlreadyStartedException();
         }
         
         session.StartedAt = DateTime.Now;
@@ -124,7 +124,7 @@ public class SessionProvider
 
         if (session.StartedAt == null)
         {
-            throw new SessionNotStartedException(sessionId);
+            throw new SessionNotStartedException();
         }
         
         session.EndedAt = DateTime.Now;
@@ -167,7 +167,7 @@ public class SessionProvider
 
             if (targetUser == null)
             {
-                throw new UserNotFoundException(delta.OwnerId.Value);
+                throw new UserNotFoundException();
             }
 
             targetSession.Owner = targetUser;
@@ -198,7 +198,7 @@ public class SessionProvider
                 
                 if (sensor == null)
                 {
-                    throw new SensorNotFoundException(sensorId);
+                    throw new SensorNotFoundException();
                 }
                 
                 targetSession.Sensors.Add(sensor);
@@ -218,7 +218,7 @@ public class SessionProvider
                 
                 if (sensor == null)
                 {
-                    throw new SensorNotFoundException(sensorId);
+                    throw new SensorNotFoundException();
                 }
 
                 targetSession.Sensors.Remove(sensor);
@@ -236,7 +236,7 @@ public class SessionProvider
 
             if (sensor == null)
             {
-                throw new SensorNotFoundException(id);
+                throw new SensorNotFoundException();
             }
 
             yield return sensor;
@@ -249,6 +249,13 @@ public class SessionProvider
         Latitude = point.Latitude
     };
 
+    /// <summary>
+    /// Обновляет сессию
+    /// </summary>
+    /// <param name="id">Иднетификатор сессии</param>
+    /// <param name="snapshot">Снапшот сессии</param>
+    /// <exception cref="SessionNotFoundException">Вызывается, если сессия не найдена</exception>
+    /// <exception cref="KeyNotFoundException">Вызывается, если не найдено обновления для одного из маячков</exception>
     public async Task UpdateSessionStateAsync(long id, SessionSnapshot snapshot)
     {
         var session = await _sessionsRepository.FindAsync(id);

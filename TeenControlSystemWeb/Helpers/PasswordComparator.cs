@@ -20,7 +20,7 @@ public class PasswordComparator
 
         if (user == null)
         {
-            throw new UserNotFoundException(id);
+            throw new UserNotFoundException();
         }
 
         using var hasher = new Md5Hasher();

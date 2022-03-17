@@ -8,7 +8,7 @@ public static class SensorExtensions
     {
         if (sensor.SessionId != null)
         {
-            throw new SensorAlreadyInUseException(sensor.Id);
+            throw new SensorAlreadyInUseException();
         }
             
         sensor.Session = session;
