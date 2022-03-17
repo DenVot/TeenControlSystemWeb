@@ -26,7 +26,7 @@ public class AuthorizationController : ControllerBase
         {
             return Ok(_authorizationService.Login(loginType));
         }
-        catch (FailedToAuthUserException e)
+        catch (Exception e)
         {
             return Unauthorized(e.Message);
         }
@@ -45,9 +45,9 @@ public class AuthorizationController : ControllerBase
         {
             return Ok(await _authorizationService.LogUpAsync(logUpType));
         }
-        catch (UserAlreadyExistsWithContextUsernameException)
+        catch (Exception e)
         {
-            return BadRequest("Пользователь с таким именем уже существует");
+            return BadRequest(e.Message);
         }
     }
 }
