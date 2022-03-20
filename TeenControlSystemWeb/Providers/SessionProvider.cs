@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Mvc;
 using TeenControlSystemWeb.Data.Repositories;
 using TeenControlSystemWeb.Exceptions.Sensor;
 using TeenControlSystemWeb.Exceptions.Session;
@@ -292,4 +293,7 @@ public class SessionProvider
 
         await _dataProvider.SaveChangesAsync();
     }
+
+    public Task<Session?> GetSessionAsync(long sessionId) => _sessionsRepository.FindAsync(sessionId);
+
 }
