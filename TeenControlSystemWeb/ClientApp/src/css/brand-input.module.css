@@ -1,0 +1,10 @@
+.brand-input {
+    background: transparent;
+    border: 2px solid var(--default-blue);
+    color: #000;
+    padding: 10px;
+}
+
+.brand-input::placeholder {
+    color: var(--gray);
+}

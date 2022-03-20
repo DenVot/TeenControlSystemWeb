@@ -1,0 +1,13 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;800&display=swap');
+
+:root {
+    --default-blue: #10C2E9;
+    --default-blue-dark: #0f93b1;
+    --gray: #E1E1E1;
+    --green: #58FF3D;
+    --red: #FF543D;
+}
+
+* {
+    font-family: 'Nunito', sans-serif;
+}

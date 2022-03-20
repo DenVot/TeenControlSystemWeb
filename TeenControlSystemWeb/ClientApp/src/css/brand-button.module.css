@@ -1,0 +1,13 @@
+.brand-button {
+    background: var(--default-blue);
+    color: #FFF;
+    padding: 2px;
+    border: none;
+    outline: none;
+    border-radius: 6px;
+    transition: background-color 0.3s;
+}
+
+.brand-button:hover {
+    background: var(--default-blue-dark);
+}
