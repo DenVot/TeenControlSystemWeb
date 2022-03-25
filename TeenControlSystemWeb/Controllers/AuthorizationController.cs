@@ -9,6 +9,7 @@ namespace TeenControlSystemWeb.Controllers;
 
 [ApiController]
 [Route("/api/auth")]
+[Produces("application/json")]
 public class AuthorizationController : ControllerBase
 {
     private readonly AuthorizationService _authorizationService;

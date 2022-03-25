@@ -69,8 +69,9 @@ export default async function initialize(username: string, password: string): Pr
             password: password
         }),
         headers: {
-            "Content-Type": "application-json"
-        }
+            "Content-Type": "application/json"
+        },
+        method: "POST"
     });
     
     if(!result.ok) {
@@ -92,11 +93,12 @@ export default async function initialize(username: string, password: string): Pr
     return res;
 }
 
-export async function tryGetDefaultInstance(): Promise<UserInfo> {
+export async function getCachedUser(): Promise<UserInfo> {
     let tokenFromStorage: string | null = window.localStorage.getItem('auth_token');
-    let expireDate: Date | null = getJwtExpireDate(tokenFromStorage);
-
-    if(tokenFromStorage != null && expireDate != null && expireDate > new Date()) {
+    let expireDate: Date | null = new Date(getJwtExpireDate(tokenFromStorage) * 1000);
+    let now: Date = new Date();
+    
+    if(tokenFromStorage != null && tokenFromStorage != "" && expireDate != null && expireDate > now) {
         let api = new ApiProvider(tokenFromStorage);
 
         let user = await api.getContextUser();
@@ -111,4 +113,8 @@ export async function tryGetDefaultInstance(): Promise<UserInfo> {
     }
     
     throw new Error();
+}
+
+export function resetCache() {
+    window.localStorage.setItem("auth_token", "null");
 }

@@ -5,9 +5,9 @@ function getJwtExpireDate(jwt) {
         return null;
     }
     
-    let json = atob(result[1]);
+    let json = JSON.parse(atob(result[1]));
     
-    return new Date(json.exp);
+    return json.exp;
 }
 
 export default getJwtExpireDate;

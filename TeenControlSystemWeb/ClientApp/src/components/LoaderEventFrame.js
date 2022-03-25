@@ -7,12 +7,9 @@ export function LoaderEventFrame () {
     
     useEffect(() =>{
         LoadingProvider.addLoadingListener(onLoadingStateChanged)
-        alert("Added");
     }, []);
     
     function onLoadingStateChanged(loading) {
-        alert("Load")
-        alert(loading);
         setLoading(loading);
     }
     
