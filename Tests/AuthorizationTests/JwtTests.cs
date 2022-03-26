@@ -27,9 +27,10 @@ public class JwtTests
     public void TestJwtParse()
     {
         var jwt = new JwtHelper();
+        var token = jwt.GenerateJwt(secret: "7536b1812b2fc0ca67a2cfd9466fdf9b", userId: 0L);
 
-        var jwtParseResult = jwt.ParseJwt("7536b1812b2fc0ca67a2cfd9466fdf9b",
-            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjAiLCJuYmYiOjE2NDY0NzM0NDksImV4cCI6MTY0NzY4MzA0OSwiaWF0IjoxNjQ2NDczNDQ5fQ.Pq2MWKEjJh3tEyFp-ARB0BuCIXpsSyb8HW1orTL2C4o");
+        
+        var jwtParseResult = jwt.ParseJwt("7536b1812b2fc0ca67a2cfd9466fdf9b", token);
         
         Assert.True(jwtParseResult.UserId == 0);
     }

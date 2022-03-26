@@ -1,5 +1,6 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using TeenControlSystemWeb.Attributes;
+using TeenControlSystemWeb.Data.Repositories;
 using TeenControlSystemWeb.Extensions;
 using TeenControlSystemWeb.Helpers;
 using TeenControlSystemWeb.Providers;
@@ -7,21 +8,24 @@ using TeenControlSystemWeb.Providers;
 namespace TeenControlSystemWeb.Controllers;
 
 [ApiController]
-[Authorization]
+//[Authorization]
+[Authorize]
 [Route("/api/sessions/")]
 public class SessionsController : ControllerBase
 {
     private readonly SessionProvider _sessionProvider;
+    private readonly IDataProvider _dataProvider;
 
-    public SessionsController(SessionProvider sessionProvider)
+    public SessionsController(SessionProvider sessionProvider, IDataProvider dataProvider)
     {
         _sessionProvider = sessionProvider;
+        _dataProvider = dataProvider;
     }
     
     [HttpPost("register")]
     public async Task<ActionResult> RegisterSession([FromBody] RegisterSessionType data)
     {
-        var user = this.ExtractUser();
+        var user = this.ExtractUserAsync(_dataProvider);
 
         try
         {
@@ -108,4 +112,7 @@ public class SessionsController : ControllerBase
 
         return Ok(session.ConvertToApiType());
     }
+
+    [HttpGet("get-active-sessions")]
+    public ActionResult GetActiveSessions() => Ok(_sessionProvider.GetActiveSessions());
 }

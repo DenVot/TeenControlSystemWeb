@@ -1,11 +1,15 @@
 using Microsoft.AspNetCore.Mvc;
+using TeenControlSystemWeb.Data.Repositories;
 
 namespace TeenControlSystemWeb.Extensions;
 
 public static class ControllerExtensions
 {
-    public static User ExtractUser(this ControllerBase controllerBase)
+    public static Task<User> ExtractUserAsync(this ControllerBase controllerBase, IDataProvider dataProvider)
     {
-        return (User) controllerBase.HttpContext.Items["User"]!;
+        var idStr = controllerBase.User.Claims.First(x => x.Type == "id").Value;
+        var id = long.Parse(idStr);
+        
+        return dataProvider.UsersRepository.FindAsync(id)!;
     }
 }

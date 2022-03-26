@@ -51,7 +51,7 @@ class ApiProvider {
     
     configureHeaders() : any {
         return {
-            "Authorization": this.token
+            "Authorization": "Bearer " + this.token
         };
     }
     

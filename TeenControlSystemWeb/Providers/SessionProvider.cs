@@ -294,6 +294,23 @@ public class SessionProvider
         await _dataProvider.SaveChangesAsync();
     }
 
+    /// <summary>
+    /// Получает сессию по индентификатору
+    /// </summary>
+    /// <param name="sessionId">Id сессии</param>
     public Task<Session?> GetSessionAsync(long sessionId) => _sessionsRepository.FindAsync(sessionId);
 
+    /// <summary>
+    /// Получает все активные сессии
+    /// </summary>
+    public IEnumerable<SessionType> GetActiveSessions()
+    {
+        foreach (var session in _sessionsRepository.GetAll())
+        {
+            if (session.StartedAt != null && session.EndedAt == null)
+            {
+                yield return session.ConvertToApiType();
+            }
+        }
+    }
 }

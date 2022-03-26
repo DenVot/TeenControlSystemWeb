@@ -9,19 +9,16 @@ public class JwtHelper
 {
     public string GenerateJwt(string secret, long userId)
     {
+        var jwtToken = new JwtSecurityToken(issuer: "TcsNeoApiServer",
+            audience: "TcsNeoClient",
+            notBefore: DateTime.UtcNow,
+            expires: DateTime.UtcNow.AddHours(2),
+            signingCredentials: new SigningCredentials(new SymmetricSecurityKey(Encoding.ASCII.GetBytes(secret)),
+                SecurityAlgorithms.HmacSha256),
+            claims: new []{new Claim("id", userId.ToString())});
         var handler = new JwtSecurityTokenHandler();
-        var codedSecret = Encoding.ASCII.GetBytes(secret);
 
-        var descriptor = new SecurityTokenDescriptor()
-        {
-            Subject = new ClaimsIdentity(new[] {new Claim("id", userId.ToString())}),
-            Expires = DateTime.Now.AddDays(14),
-            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(codedSecret), SecurityAlgorithms.HmacSha256Signature)
-        };
-
-        var token = handler.CreateToken(descriptor);
-
-        return handler.WriteToken(token);
+        return handler.WriteToken(jwtToken);
     }
 
     public JwtResult ParseJwt(string secret, string jwt)
@@ -33,8 +30,10 @@ public class JwtHelper
         {
             ValidateIssuerSigningKey = true,
             IssuerSigningKey = new SymmetricSecurityKey(secretBytes),
-            ValidateIssuer = false,
-            ValidateAudience = false,
+            ValidateIssuer = true,
+            ValidIssuer = "TcsNeoApiServer",
+            ValidAudience = "TcsNeoClient",
+            ValidateAudience = true,
             ClockSkew = TimeSpan.Zero
         }, out var token);
         

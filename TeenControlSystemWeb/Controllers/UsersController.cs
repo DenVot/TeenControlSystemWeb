@@ -1,5 +1,5 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using TeenControlSystemWeb.Attributes;
 using TeenControlSystemWeb.Data.Repositories;
 using TeenControlSystemWeb.Extensions;
 
@@ -7,7 +7,7 @@ namespace TeenControlSystemWeb.Controllers;
 
 [ApiController]
 [Route("/api/users")]
-[Authorization]
+[Authorize]
 public class UsersController : ControllerBase
 {
     private readonly IDataProvider _provider;
@@ -18,9 +18,9 @@ public class UsersController : ControllerBase
     }
     
     [HttpGet("get-context-user")]
-    public ActionResult GetContextUser()
+    public async Task<ActionResult> GetContextUser()
     {
-        var user = this.ExtractUser();
+        var user = await this.ExtractUserAsync(_provider);
 
         return Ok(user.ConvertToApiType());
     }

@@ -1,7 +1,6 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using TeenControlSystemWeb.Attributes;
 using TeenControlSystemWeb.Data.Repositories;
-using TeenControlSystemWeb.Exceptions.User;
 using TeenControlSystemWeb.Extensions;
 using TeenControlSystemWeb.Services;
 
@@ -12,10 +11,12 @@ namespace TeenControlSystemWeb.Controllers;
 [Produces("application/json")]
 public class AuthorizationController : ControllerBase
 {
+    private readonly IDataProvider _dataProvider;
     private readonly AuthorizationService _authorizationService;
 
     public AuthorizationController(IDataProvider dataProvider, IConfiguration configuration)
     {
+        _dataProvider = dataProvider;
         _authorizationService = new AuthorizationService(dataProvider, configuration);
     }
 
@@ -34,10 +35,10 @@ public class AuthorizationController : ControllerBase
     }
 
     [HttpPost]
-    [Authorization]
+    [Authorize]
     public async Task<ActionResult> LogUp([FromBody] UserLogUpType logUpType)
     {
-        if (!this.ExtractUser().IsAdmin)
+        if (!(await this.ExtractUserAsync(_dataProvider)).IsAdmin)
         {
             return Unauthorized("У Вас нет прав для регистрации");
         }
