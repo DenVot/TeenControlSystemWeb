@@ -7,6 +7,7 @@ public static class UserExtensions
         Id = user.Id,
         Username = user.Username,
         ActiveSession = user.Session?.ConvertToApiType(),
-        IsAdmin = user.IsAdmin
+        IsAdmin = user.IsAdmin,
+        AvatarId = user.DefaultAvatarId
     };
 }

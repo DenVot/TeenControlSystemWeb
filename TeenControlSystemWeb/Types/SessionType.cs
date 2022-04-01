@@ -8,5 +8,6 @@ public class SessionType
     public DateTime StartAt { get; set; }
     public DateTime? StartedAt { get; set; }
     public DateTime? EndedAt { get; set; }
-    public IEnumerable<SensorType> Sensors { get; set; } 
+    public IEnumerable<SensorType> Sensors { get; set; }
+    public IEnumerable<PointType> Points { get; set; }
 }

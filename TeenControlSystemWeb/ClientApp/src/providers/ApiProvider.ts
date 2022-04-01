@@ -23,7 +23,8 @@ interface User {
     id: number,
     username: string,
     isAdmin: boolean,
-    activeSession: Session | null
+    activeSession: Session | null,
+    avatarId: number
 }
 
 export interface UserInfo {
@@ -53,6 +54,28 @@ class ApiProvider {
         return {
             "Authorization": "Bearer " + this.token
         };
+    }
+    
+    async getActiveSessions() : Promise<Session[]> {
+        let response: Response = await fetch("/api/sessions/get-active-sessions", {
+            headers: this.configureHeaders(),
+            method: "GET"
+        });
+        
+        await ApiProvider.ensureSuccessReponse(response);
+        
+        return response.json();
+    }
+    
+    async getAllUsers() : Promise<User[]> {
+        let response: Response = await fetch("/api/users/get-all-users", {
+            headers: this.configureHeaders(),
+            method: "GET"
+        });
+
+        await ApiProvider.ensureSuccessReponse(response);
+
+        return response.json();
     }
     
     private static async ensureSuccessReponse(response: Response) {

@@ -16,6 +16,7 @@ namespace TeenControlSystemWeb.Data.Models
         {
         }
 
+        public virtual DbSet<DefaultAvatar> DefaultAvatars { get; set; } = null!;
         public virtual DbSet<Point> Points { get; set; } = null!;
         public virtual DbSet<Sensor> Sensors { get; set; } = null!;
         public virtual DbSet<Session> Sessions { get; set; } = null!;
@@ -60,23 +61,11 @@ namespace TeenControlSystemWeb.Data.Models
             {
                 entity.Property(e => e.Name).HasMaxLength(512);
 
-                entity.HasOne(d => d.From)
-                    .WithMany(p => p.SessionFroms)
-                    .HasForeignKey(d => d.FromId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Sessions__FromId__31EC6D26");
-
                 entity.HasOne(d => d.Owner)
                     .WithMany(p => p.Sessions)
                     .HasForeignKey(d => d.OwnerId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK__Sessions__OwnerI__286302EC");
-
-                entity.HasOne(d => d.To)
-                    .WithMany(p => p.SessionTos)
-                    .HasForeignKey(d => d.ToId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Sessions__ToId__30F848ED");
             });
 
             modelBuilder.Entity<User>(entity =>
@@ -86,6 +75,12 @@ namespace TeenControlSystemWeb.Data.Models
                     .IsUnicode(false);
 
                 entity.Property(e => e.Username).IsUnicode(false);
+
+                entity.HasOne(d => d.DefaultAvatar)
+                    .WithMany(p => p.Users)
+                    .HasForeignKey(d => d.DefaultAvatarId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__Users__DefaultAv__49C3F6B7");
 
                 entity.HasOne(d => d.Session)
                     .WithMany(p => p.Users)

@@ -25,16 +25,12 @@ public class SessionsController : ControllerBase
     [HttpPost("register")]
     public async Task<ActionResult> RegisterSession([FromBody] RegisterSessionType data)
     {
-        var user = this.ExtractUserAsync(_dataProvider);
-
         try
         {
-            await _sessionProvider.RegisterSessionAsync(user.Id,
+            await _sessionProvider.RegisterSessionAsync(data.OwnerId,
                 data.Name,
                 data.StartAt,
-                data.SensorsIds,
-                data.FromPoint,
-                data.ToPoint);
+                data.SensorsIds);
 
             return Ok();
         }

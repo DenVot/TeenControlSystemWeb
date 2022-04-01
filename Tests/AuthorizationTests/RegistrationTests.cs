@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Moq;
@@ -19,6 +20,17 @@ public class RegistrationTests
         var configMock = new Mock<IConfiguration>();
         configMock.Setup(x => x["JwtSecret"]).Returns("7536b1812b2fc0ca67a2cfd9466fdf9b");
         dataProvider.Setup(x => x.UsersRepository.GetAll()).Returns(ArraySegment<User>.Empty);
+        dataProvider.Setup(x => x.DefaultAvatarsRepository.GetAll()).Returns(() => new List<DefaultAvatar>()
+        {
+            new()
+            {
+                Id = 0
+            },
+            new()
+            {
+                Id = 1
+            }
+        });
         
         var authService = dataProvider.ConfigureAuthorizationService(configMock.Object);
 
@@ -33,6 +45,7 @@ public class RegistrationTests
         
         Assert.NotNull(authResponse.User);
         Assert.NotNull(authResponse.Token);
+        Assert.True(authResponse.User.AvatarId == 0 || authResponse.User.AvatarId == 1);
     }
 
     [Fact]
@@ -45,6 +58,17 @@ public class RegistrationTests
             new User()
             {
                 Username = "User"
+            }
+        });
+        dataProvider.Setup(x => x.DefaultAvatarsRepository.GetAll()).Returns(() => new List<DefaultAvatar>()
+        {
+            new()
+            {
+                Id = 0
+            },
+            new()
+            {
+                Id = 1
             }
         });
         

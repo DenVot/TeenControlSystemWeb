@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.IdentityModel.Tokens;
 using TeenControlSystemWeb.Data.Repositories;
+using TeenControlSystemWeb.Providers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +19,8 @@ builder.Services.AddDbContext<TcsDatabaseContext>(options =>
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddTransient<IDataProvider, DataProvider>();
+builder.Services.AddTransient<MediaProvider>();
+builder.Services.AddTransient<SessionProvider>();
 builder.Services.AddSwaggerGen();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
 {

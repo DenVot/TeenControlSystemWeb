@@ -11,7 +11,8 @@ public class AuthorizationService
     private readonly IDataProvider _dataProvider;
     private readonly IConfiguration _configuration;
     private readonly PasswordComparator _passwordComparator;
-
+    private readonly Random _random = new();
+    
     public AuthorizationService(IDataProvider dataProvider, IConfiguration configuration)
     {
         _dataProvider = dataProvider;
@@ -31,7 +32,11 @@ public class AuthorizationService
     {
         using var hasher = new Md5Hasher();
         var allUsers = _dataProvider.UsersRepository.GetAll().ToArray();
+        var avatars = _dataProvider.DefaultAvatarsRepository.GetAll().ToArray();
 
+        var avatarOrd = _random.Next(0, avatars.Length - 1);
+        var avatarId = avatars[avatarOrd].Id;
+        
         if (allUsers.Any(x => x.Username == logUpType.Username))
         {
             throw new UserAlreadyExistsWithContextUsernameException();
@@ -41,7 +46,8 @@ public class AuthorizationService
         {
             Username = logUpType.Username,
             IsAdmin = logUpType.IsAdmin,
-            PasswordMd5Hash = hasher.HashString(logUpType.Password)
+            PasswordMd5Hash = hasher.HashString(logUpType.Password),
+            DefaultAvatarId = avatarId
         };
 
         await _dataProvider.UsersRepository.AddAsync(user);

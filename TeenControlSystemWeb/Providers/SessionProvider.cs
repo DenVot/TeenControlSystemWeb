@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using TeenControlSystemWeb.Data.Repositories;
 using TeenControlSystemWeb.Exceptions.Sensor;
 using TeenControlSystemWeb.Exceptions.Session;
@@ -35,16 +36,12 @@ public class SessionProvider
     /// <param name="sessionName">Назавание сессии</param>
     /// <param name="startAt">Запланированное начало сессии</param>
     /// <param name="sensorsIds">Id всех сенсоров, которые учавствуют в сессии</param>
-    /// <param name="fromPointType">Начальная точка сессии</param>
-    /// <param name="toPointType">Конечная точка сессии</param>
     /// <exception cref="UserNotFoundException">Вызывается, если пользователь не найден</exception>
     /// <exception cref="UserAlreadyInUseException">Вызывается, если пользователь уже учавствует в другой сессии</exception>
     public async Task RegisterSessionAsync(long userId,
         string sessionName,
         DateTime startAt,
-        IEnumerable<long> sensorsIds,
-        PointType fromPointType,
-        PointType toPointType)
+        IEnumerable<long> sensorsIds)
     {
         var targetUser = await _usersRepository.FindAsync(userId);
 
@@ -58,13 +55,8 @@ public class SessionProvider
             throw new UserAlreadyInUseException();
         }
         
-        var sensors = SearchSensors(sensorsIds);
-        var pointA = ConvertPoint(fromPointType);
-        var pointB = ConvertPoint(toPointType);
-        
-        await _pointsRepository.AddAsync(pointA);
-        await _pointsRepository.AddAsync(pointB);
-        
+        var sensors = await SearchSensorsAsync(sensorsIds);
+
         var session = new Session()
         {
             StartAt = startAt,
@@ -73,11 +65,10 @@ public class SessionProvider
         
         await _sessionsRepository.AddAsync(session);
 
+        session.Owner = targetUser;
         targetUser.Session = session;
-        session.Points.Add(pointA);
-        session.Points.Add(pointB);
-
-        await foreach (var sensor in sensors)
+        
+        foreach (var sensor in sensors)
         {
             sensor!.BindSensorToSession(session);
             sensor!.Online = false;
@@ -232,8 +223,17 @@ public class SessionProvider
         await _dataProvider.SaveChangesAsync();
     }
 
-    private async IAsyncEnumerable<Sensor?> SearchSensors(IEnumerable<long> ids) //Поиск маячков по идентификаторам
+    private async Task<IEnumerable<Sensor?>> SearchSensorsAsync(IEnumerable<long> ids) //Поиск маячков по идентификаторам
     {
+        var sensors = _sensorsRepository.GetAll();
+
+        if (sensors is DbSet<Sensor> set)
+        {
+            return set.FromSqlInterpolated($"SELECT * FROM dbo.Sensors AS sensor WHERE Id IN ({ids.ConvertToCommasString()})");
+        }
+
+        var sens = new List<Sensor>();
+        
         foreach (var id in ids)
         {
             var sensor = await _sensorsRepository.FindAsync(id);
@@ -242,9 +242,10 @@ public class SessionProvider
             {
                 throw new SensorNotFoundException();
             }
-
-            yield return sensor;
+            sens.Add(sensor);
         }
+
+        return sens;
     }
 
     private static Point ConvertPoint(PointType point) => new()
@@ -305,12 +306,15 @@ public class SessionProvider
     /// </summary>
     public IEnumerable<SessionType> GetActiveSessions()
     {
-        foreach (var session in _sessionsRepository.GetAll())
+        var allEnumerable = _sessionsRepository.GetAll();
+        if (allEnumerable is DbSet<Session> dbSet)
         {
-            if (session.StartedAt != null && session.EndedAt == null)
-            {
-                yield return session.ConvertToApiType();
-            }
+            return dbSet.FromSqlRaw("SELECT * FROM dbo.Sessions WHERE StartedAt IS NOT NULL AND EndedAt IS NULL").ToList()
+                .Select(x => x.ConvertToApiType());
         }
+
+        return from session in allEnumerable
+            where session.StartedAt != null && session.EndedAt == null
+            select session.ConvertToApiType();
     }
 }

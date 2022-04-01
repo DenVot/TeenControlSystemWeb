@@ -15,8 +15,6 @@ public class SessionRegisteringTests
 {
     private readonly long[] _sensorsIds = {0};
     private const string SessionName = "Session";
-    private readonly PointType _fromPoint = new(0, 0);
-    private readonly PointType _toPoint = new(10, 10);
     private readonly DateTime _startAt = new(2022, 2, 22);
     
     [Fact]
@@ -45,9 +43,7 @@ public class SessionRegisteringTests
         await sessionProvider.RegisterSessionAsync(userId,
             SessionName,
             _startAt,
-            _sensorsIds,
-            _fromPoint,
-            _toPoint);
+            _sensorsIds);
     }
 
     [Fact]
@@ -73,9 +69,7 @@ public class SessionRegisteringTests
         await Assert.ThrowsAsync<UserNotFoundException>(() => sessionProvider.RegisterSessionAsync(userId,
             SessionName,
             _startAt,
-            _sensorsIds,
-            _fromPoint,
-            _toPoint));
+            _sensorsIds));
     }
 
     [Fact]
@@ -100,9 +94,7 @@ public class SessionRegisteringTests
         await Assert.ThrowsAsync<SensorNotFoundException>(() => sessionProvider.RegisterSessionAsync(userId,
             SessionName,
             _startAt,
-            new[] {0L, 11},
-            _fromPoint,
-            _toPoint));
+            new[] {0L, 11}));
     }
     
     [Fact]
@@ -133,9 +125,7 @@ public class SessionRegisteringTests
         await Assert.ThrowsAsync<UserAlreadyInUseException>(() => sessionProvider.RegisterSessionAsync(userId,
             SessionName,
             _startAt,
-            new []{9L},
-            _fromPoint,
-            _toPoint));
+            new []{9L}));
     }
 
     [Fact]
@@ -163,8 +153,6 @@ public class SessionRegisteringTests
         await Assert.ThrowsAsync<SensorAlreadyInUseException>(() => sessionProvider.RegisterSessionAsync(0,
             SessionName,
             _startAt,
-            _sensorsIds,
-            _fromPoint,
-            _toPoint));
+            _sensorsIds));
     }
 }

@@ -15,7 +15,9 @@ namespace TeenControlSystemWeb.Data.Models
         public string PasswordMd5Hash { get; set; } = null!;
         public bool IsAdmin { get; set; }
         public long? SessionId { get; set; }
+        public long DefaultAvatarId { get; set; }
 
+        public virtual DefaultAvatar DefaultAvatar { get; set; } = null!;
         public virtual Session? Session { get; set; }
         public virtual ICollection<Session> Sessions { get; set; }
     }

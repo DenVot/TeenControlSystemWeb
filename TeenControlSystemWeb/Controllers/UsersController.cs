@@ -24,4 +24,17 @@ public class UsersController : ControllerBase
 
         return Ok(user.ConvertToApiType());
     }
+
+    [HttpGet("get-all-users")]
+    public async Task<ActionResult> GetAllUsers()
+    {
+        var user = await this.ExtractUserAsync(_provider);
+
+        if (!user.IsAdmin)
+        {
+            return BadRequest("У Вас нет прав на это действие");
+        }
+
+        return Ok(_provider.UsersRepository.GetAll().ToList().Select(x => x.ConvertToApiType()));
+    }
 }

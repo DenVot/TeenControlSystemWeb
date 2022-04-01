@@ -27,7 +27,11 @@ public class SessionStateUpdateTests
             {
                 {0, true}
             },
-            Point = new PointType(0, 0)
+            Point = new PointType()
+            {
+                Longitude = 0,
+                Latitude = 0
+            }
         };
 
         var session = new Session()
@@ -81,7 +85,11 @@ public class SessionStateUpdateTests
             {
                 
             },
-            Point = new PointType(0, 0)
+            Point =  new PointType()
+            {
+                Longitude = 0,
+                Latitude = 0
+            }
         };
 
         var session = new Session()

@@ -6,4 +6,5 @@ public class UserType
     public string Username { get; set; }
     public bool IsAdmin { get; set; }
     public SessionType? ActiveSession { get; set; }
+    public long AvatarId { get; set; }
 }
