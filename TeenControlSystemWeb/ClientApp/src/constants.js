@@ -5,6 +5,8 @@ export default {
     },
     events: {
         loadingStateChanged: "LOADING_STATE_CHANGED",
-        raiseMsg: "RAISE_MSG"
+        raiseMsg: "RAISE_MSG",
+        raiseSensDialog: "RAISE_SENS_DIALOG",
+        sensDialogResult: "SENS_DIALOG_RESULT"
     }
 };

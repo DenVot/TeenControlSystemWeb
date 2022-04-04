@@ -11,12 +11,12 @@ namespace TeenControlSystemWeb.Controllers;
 [Produces("application/json")]
 public class AuthorizationController : ControllerBase
 {
-    private readonly IDataProvider _dataProvider;
+    private readonly RankService _rankService;
     private readonly AuthorizationService _authorizationService;
 
-    public AuthorizationController(IDataProvider dataProvider, IConfiguration configuration)
+    public AuthorizationController(IDataProvider dataProvider, IConfiguration configuration, RankService rankService)
     {
-        _dataProvider = dataProvider;
+        _rankService = rankService;
         _authorizationService = new AuthorizationService(dataProvider, configuration);
     }
 
@@ -38,7 +38,7 @@ public class AuthorizationController : ControllerBase
     [Authorize]
     public async Task<ActionResult> LogUp([FromBody] UserLogUpType logUpType)
     {
-        if (!(await this.ExtractUserAsync(_dataProvider)).IsAdmin)
+        if (!this.IsUserIsAdmin(_rankService))
         {
             return Unauthorized("У Вас нет прав для регистрации");
         }

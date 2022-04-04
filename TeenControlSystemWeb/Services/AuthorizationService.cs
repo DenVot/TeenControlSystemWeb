@@ -32,16 +32,17 @@ public class AuthorizationService
     {
         using var hasher = new Md5Hasher();
         var allUsers = _dataProvider.UsersRepository.GetAll().ToArray();
-        var avatars = _dataProvider.DefaultAvatarsRepository.GetAll().ToArray();
-
-        var avatarOrd = _random.Next(0, avatars.Length - 1);
-        var avatarId = avatars[avatarOrd].Id;
         
         if (allUsers.Any(x => x.Username == logUpType.Username))
         {
             throw new UserAlreadyExistsWithContextUsernameException();
         }
 
+        var avatars = _dataProvider.DefaultAvatarsRepository.GetAll().ToArray();
+
+        var avatarOrd = _random.Next(0, avatars.Length - 1);
+        var avatarId = avatars[avatarOrd].Id;
+        
         var user = new User()
         {
             Username = logUpType.Username,

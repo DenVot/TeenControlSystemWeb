@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TeenControlSystemWeb.Data.Repositories;
 using TeenControlSystemWeb.Extensions;
+using TeenControlSystemWeb.Services;
 
 namespace TeenControlSystemWeb.Controllers;
 
@@ -11,10 +12,12 @@ namespace TeenControlSystemWeb.Controllers;
 public class UsersController : ControllerBase
 {
     private readonly IDataProvider _provider;
+    private readonly RankService _rankService;
 
-    public UsersController(IDataProvider provider)
+    public UsersController(IDataProvider provider, RankService rankService)
     {
         _provider = provider;
+        _rankService = rankService;
     }
     
     [HttpGet("get-context-user")]
@@ -26,11 +29,9 @@ public class UsersController : ControllerBase
     }
 
     [HttpGet("get-all-users")]
-    public async Task<ActionResult> GetAllUsers()
+    public ActionResult GetAllUsers()
     {
-        var user = await this.ExtractUserAsync(_provider);
-
-        if (!user.IsAdmin)
+        if (!this.IsUserIsAdmin(_rankService))
         {
             return BadRequest("У Вас нет прав на это действие");
         }
