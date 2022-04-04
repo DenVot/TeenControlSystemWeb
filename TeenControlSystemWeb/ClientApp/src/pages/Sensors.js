@@ -1,10 +1,16 @@
+import {BrandInput} from "../components/BrandInput";
+
 const EventEmitter = require("events");
 const constants = require("../constants");
 const {useState} = require("react");
-import React from "react";
+import React, {useEffect} from "react";
 
 function Sensors() {
     const [sens, setSens] = useState(null);
+    
+    useEffect(() => {
+        new SensorDialog().addDialogResultListener(onSensDialogResultReceived);    
+    }, []);
     
     function onFilterChanged(e) {
             
@@ -22,13 +28,31 @@ function Sensors() {
     return <div>
         <h1>Маячки</h1>
         <AddSensorButton onSensAdded={}/>
-        <FilterFrame/>
+        <FilterFrame onFilterChanged={onFilterChanged}/>
         <SensorsList/>
     </div>
 }
 
 function FilterFrame({onFilterChanged}) {
-    return <></>;
+    function onInputValueChanged(e) {
+        const value = e.target.value;
+        
+        let ev = {
+          updateType: "SEARCH_CHANGE",
+          search: value,
+          filter: null  
+        };
+        
+        onFilterChanged(ev);
+    }
+    
+    return <div>
+        <BrandInput placeholder="Поиск" type="search" onChange={onInputValueChanged}/>
+        <div>
+            <span>Фильтровать по</span>
+            
+        </div>
+    </div>;
 }
 
 function AddSensorButton({onSensAdded}) {
