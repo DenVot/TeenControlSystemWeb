@@ -6,5 +6,5 @@ public class SensorType
     public string Name { get; set; }
     public string Mac { get; set; }
     public SessionType? ActiveSession { get; set; }
-    public bool Online { get; set; }
+    public bool? Online { get; set; }
 }

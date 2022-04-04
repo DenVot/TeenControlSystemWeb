@@ -13,4 +13,16 @@ public static class SensorExtensions
             
         sensor.Session = session;
     }
+
+    public static SensorType ConvertToApiType(this Sensor sensor, bool includeActiveSession = true)
+    {
+        return new SensorType()
+        {
+            Id = sensor.Id,
+            Name = sensor.Name,
+            Mac = sensor.Mac,
+            Online = sensor.Online,
+            ActiveSession = includeActiveSession ? sensor.Session?.ConvertToApiType(false) ?? null : null 
+        };
+    }
 }
