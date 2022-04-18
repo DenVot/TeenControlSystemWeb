@@ -22,7 +22,8 @@ public static class SensorExtensions
             Name = sensor.Name,
             Mac = sensor.Mac,
             Online = sensor.Online,
-            ActiveSession = includeActiveSession ? sensor.Session?.ConvertToApiType(false) ?? null : null 
+            ActiveSession = includeActiveSession ? sensor.Session?.ConvertToApiType(false) ?? null : null ,
+            Order = sensor.Order
         };
     }
 }

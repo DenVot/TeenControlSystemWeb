@@ -73,7 +73,7 @@ const useStyles = createUseStyles({
     },
     mainInfoFrame: {
         position: "absolute",
-        width: "30%",
+        width: 600,
         height: "100%",
         left: 0,
         top: 0,
@@ -82,34 +82,6 @@ const useStyles = createUseStyles({
         backdropFilter: "blur(4px)",
         padding: 50,
         transition: "transform 1s cubic-bezier(0, 0.66, 0.65, 1)"
-    },
-    headerStyle: {
-        position: "absolute",
-        width: "100%",
-        left: 0,
-        top: 0,
-        zIndex: 10000,
-        display: "flex",
-        flexDirection: "row",
-        justifyContent: "flex-end",
-        alignItems: "center",
-        "& a": {
-            color: "#000",
-            textDecoration: "none",
-            fontSize: 24,
-            fontWeight: "bold",
-            "&:hover": {
-                textDecoration: "underline"
-            }
-        },
-        height: "10%"
-    },
-    navImage: {
-        margin: 10
-    },
-    avatar: {
-        borderRadius: "50%",
-        margin: 10
     },
     lowDunk: {
         position: "absolute",
@@ -139,7 +111,7 @@ const useStyles = createUseStyles({
         }
     },
     scrolledBox: {
-        maxHeight: "500px",
+        maxHeight: "400px",
         overflowY: "auto",
         overflowX: "hidden",
         "&::-webkit-scrollbar": {
@@ -172,7 +144,6 @@ export function Home() {
     }, []) //Sessions fetching
     
     return <div className={styles.homeFrame}>
-        <Header/>
         <button onClick={() => setOpened(!lowDunkOpened)} className={styles.lowDunk}>{lowDunkOpened ? "-" : "+"}</button>
         <div style={{transform: lowDunkOpened ? "translateY(-100%)" : "translateY(0)"}}
              className={styles.mainInfoFrame}>
@@ -185,27 +156,7 @@ export function Home() {
     </div>
 }
 
-function Header() {
-    const user = UserAuthInfo.userInfo.user;
-    const styles = useStyles();
-    const icoWidth = 30;
 
-    return <div className={styles.headerStyle}>
-        <nav>
-            <Link to="/home">
-                <img className={styles.navImage} src={HomeIcon} alt="Домой" width={icoWidth}/>
-                <img src={Sensor} alt="Маячки" width={icoWidth} className={styles.navImage}/>
-                {user.isAdmin && <img src={Users} alt="Пользователи" width={icoWidth} className={styles.navImage}/>}
-            </Link>
-        </nav>
-        <div>
-            <Link to="/profile">
-                {user.username}
-            </Link>
-            <img className={styles.avatar} src={"/api/media/def-avatar?id=" + user.avatarId} alt="Подождите..."/>
-        </div>
-    </div>
-}
 
 function Sessions({sessions}) {
     const defStyles = useDefStyle();

@@ -8,5 +8,8 @@ export default {
         raiseMsg: "RAISE_MSG",
         raiseSensDialog: "RAISE_SENS_DIALOG",
         sensDialogResult: "SENS_DIALOG_RESULT"
+    },
+    sensEvents: {
+        sensorDelete: "SENSOR_DELETE"
     }
 };

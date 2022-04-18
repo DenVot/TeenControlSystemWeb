@@ -10,6 +10,7 @@ namespace TeenControlSystemWeb.Data.Models
         public string Name { get; set; } = null!;
         public long? SessionId { get; set; }
         public bool? Online { get; set; }
+        public int Order { get; set; }
 
         public virtual Session? Session { get; set; }
     }

@@ -1,38 +1,8 @@
 import getJwtExpireDate from "../jwtDeserializer";
 import {UserAuthInfo} from "../UserAuthInfo";
+import {User, Session, UserInfo, Sensor} from "../types/ApiTypes";
 
-interface Sensor {
-    id: number,
-    name: string,
-    mac: string,
-    activeSession: Session | null,
-    online: boolean
-}
-
-interface Session {
-    id: number,
-    name: string,
-    owner: User | null,
-    startAt: Date,
-    startedAt: Date | null,
-    endedAt: Date | null,
-    sensors: Sensor[]
-}
-
-interface User {
-    id: number,
-    username: string,
-    isAdmin: boolean,
-    activeSession: Session | null,
-    avatarId: number
-}
-
-export interface UserInfo {
-    provider: ApiProvider,
-    user: User
-}
-
-class ApiProvider {
+export class ApiProvider {
     private readonly token: string;
     
     constructor(token: string) {
@@ -52,7 +22,8 @@ class ApiProvider {
     
     configureHeaders() : any {
         return {
-            "Authorization": "Bearer " + this.token
+            "Authorization": "Bearer " + this.token,
+            "Content-Type": "application/json"
         };
     }
     
@@ -76,6 +47,58 @@ class ApiProvider {
         await ApiProvider.ensureSuccessReponse(response);
 
         return response.json();
+    }
+    
+    addSensor(mac: string, name: string, order: number | null) {
+        fetch("/api/sensors/add-sensor", {
+            headers: this.configureHeaders(),
+            method: "POST",
+            body: JSON.stringify({
+                order: order,
+                name: name,
+                mac: mac
+            })
+        }).then(response => ApiProvider.ensureSuccessReponse(response));
+    }
+    
+    async getAllSensors() : Promise<Sensor[]> {
+        let response: Response = await fetch("/api/sensors/get-all-sensors", {
+            headers: this.configureHeaders(),
+            method: "GET"
+        });
+
+        await ApiProvider.ensureSuccessReponse(response);
+
+        return response.json();
+    }
+    
+    editSensorName(id: number, name: string) {
+        fetch("/api/sensors/edit-sensor-name", {
+            headers: this.configureHeaders(),
+            method: "PUT",
+            body: JSON.stringify({
+                sensorId: id,
+                newName: name
+            })
+        }).then(response => ApiProvider.ensureSuccessReponse(response));
+    }
+    
+    editSensorOrder(id: number, order: number) {
+        fetch("/api/sensors/edit-sensor-order", {
+            headers: this.configureHeaders(),
+            method: "PUT",
+            body: JSON.stringify({
+                sensorId: id,
+                order: order
+            })
+        }).then(response => ApiProvider.ensureSuccessReponse(response));
+    }
+    
+    deleteSensor(id: number) {
+        fetch("/api/sensors/remove-sensor?id=" + id, {
+            headers: this.configureHeaders(),
+            method: "DELETE"
+        }).then(response => ApiProvider.ensureSuccessReponse(response));
     }
     
     private static async ensureSuccessReponse(response: Response) {

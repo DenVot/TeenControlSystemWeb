@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
-using TeenControlSystemWeb.Data.Repositories;
-using TeenControlSystemWeb.Services;
 
 namespace TeenControlSystemWeb.Data.Models
 {
@@ -32,7 +30,7 @@ namespace TeenControlSystemWeb.Data.Models
                 optionsBuilder.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=TcsDatabase;Trusted_Connection=True;");
             }
         }
-        
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Point>(entity =>
@@ -46,6 +44,9 @@ namespace TeenControlSystemWeb.Data.Models
 
             modelBuilder.Entity<Sensor>(entity =>
             {
+                entity.HasIndex(e => e.Order, "Sensors_Order_uindex")
+                    .IsUnique();
+
                 entity.HasIndex(e => e.Mac, "UQ__Sensors__C7977BD428267B12")
                     .IsUnique();
 
@@ -91,15 +92,6 @@ namespace TeenControlSystemWeb.Data.Models
             });
 
             OnModelCreatingPartial(modelBuilder);
-        }
-
-        public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new())
-        {
-            var i = await base.SaveChangesAsync(cancellationToken);
-            
-            RankService.FillMemoryHash(ChangeTracker.Entries<User>().Select(x => x.Entity));
-
-            return i;
         }
 
         partial void OnModelCreatingPartial(ModelBuilder modelBuilder);

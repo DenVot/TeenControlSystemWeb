@@ -23,6 +23,7 @@ builder.Services.AddTransient<IDataProvider, DataProvider>();
 builder.Services.AddTransient<MediaProvider>();
 builder.Services.AddTransient<SessionProvider>();
 builder.Services.AddTransient<RankService>();
+builder.Services.AddTransient<SensorsProvider>();
 builder.Services.AddSwaggerGen();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
 {

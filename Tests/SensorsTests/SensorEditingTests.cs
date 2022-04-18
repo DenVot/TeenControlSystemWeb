@@ -26,7 +26,7 @@ public class SensorEditingTests
 
         var sensorsProvider = new SensorsProvider(dataProviderMock.Object);
 
-        await sensorsProvider.EditSensorAsync(0L, "test");
+        await sensorsProvider.EditSensorAsync(0L, "test", null);
         
         Assert.Equal("test", sensor.Name);
     }
@@ -40,6 +40,6 @@ public class SensorEditingTests
 
         var sensorsProvider = new SensorsProvider(dataProviderMock.Object);
         
-        await Assert.ThrowsAsync<SensorNotFoundException>(() => sensorsProvider.EditSensorAsync(0L, "test"));
+        await Assert.ThrowsAsync<SensorNotFoundException>(() => sensorsProvider.EditSensorAsync(0L, "test", null));
     }
 }

@@ -45,7 +45,11 @@ public class RankService
         {
             for (var i = 0; i < bytes.Length; i++)
             {
-                if(bytes[i] != sha256Bytes[i]) incorrect = true; break;
+                if(bytes[i] != sha256Bytes[i])
+                {
+                    incorrect = true;
+                    break;
+                }
             }
 
             if (!incorrect)
